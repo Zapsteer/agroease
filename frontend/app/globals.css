@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --green:       #1B5E20;
+  --green-mid:   #2E7D32;
+  --green-light: #E8F5E9;
+  --beige:       #F5F5DC;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #F5F5DC;
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display { font-family: 'Playfair Display', serif; }
+
+/* Mobile app container */
+.app-container {
+  max-width: 430px;
+  margin: 0 auto;
+  background: white;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Scrollbars hidden */
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
+
+/* Custom green button */
+.btn-green {
+  @apply bg-green-primary text-white font-semibold rounded-xl py-3 px-6 
+         hover:bg-green-medium transition-all active:scale-95 cursor-pointer;
+}
+
+.btn-outline-green {
+  @apply border-2 border-green-primary text-green-primary font-semibold 
+         rounded-xl py-3 px-6 hover:bg-green-pale transition-all active:scale-95 cursor-pointer;
+}
+
+/* Card */
+.card {
+  @apply bg-white border border-gray-100 rounded-2xl p-4 shadow-sm;
+}
+
+/* Section title */
+.section-title {
+  @apply font-display text-lg font-semibold text-gray-900;
+}
+
+/* Badge */
+.badge-green  { @apply bg-green-pale text-green-medium text-xs font-semibold px-2 py-1 rounded-full; }
+.badge-yellow { @apply bg-yellow-50 text-yellow-700 text-xs font-semibold px-2 py-1 rounded-full; }
+.badge-red    { @apply bg-red-50 text-red-600 text-xs font-semibold px-2 py-1 rounded-full; }
+.badge-blue   { @apply bg-blue-50 text-blue-600 text-xs font-semibold px-2 py-1 rounded-full; }
+
+/* Status badges */
+.status-placed     { @apply badge-yellow; }
+.status-confirmed  { @apply badge-blue; }
+.status-packed     { @apply badge-blue; }
+.status-in_transit { @apply badge-blue; }
+.status-delivered  { @apply badge-green; }
+.status-cancelled  { @apply badge-red; }
+
+/* Page animation */
+.page-enter { animation: fadeUp 0.3s ease; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Bottom nav safe area */
+.bottom-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
