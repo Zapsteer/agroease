@@ -1,0 +1,16 @@
+{
+  "name": "AgroEase",
+  "short_name": "AgroEase",
+  "description": "Kisan ki digital dukaan",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
