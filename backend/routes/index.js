@@ -7,6 +7,7 @@ const product = require("../controllers/productController");
 const shop    = require("../controllers/shopController");
 const ai      = require("../controllers/aiController");
 const admin   = require("./admin");
+
 // ── AUTH ─────────────────────────────────────────────────
 router.post("/auth/send-otp",              auth.sendOTP);
 router.post("/auth/verify-otp",            auth.verifyOTP);
@@ -57,10 +58,12 @@ router.get ("/ai/history",  protect, ai.getHistory);
 // ── REVIEWS ──────────────────────────────────────────────
 router.post("/reviews", protect, shop.createReview);
 
+// ── ADMIN ─────────────────────────────────────────────────
+router.use("/admin", admin);
+
 // ── HEALTH CHECK ─────────────────────────────────────────
 router.get("/health", (req, res) =>
   res.json({ success: true, app: "AgroEase", version: "1.0.0", time: new Date() })
 );
-// ── ADMIN ─────────────────────────────────────────────────
-router.use("/admin", admin);
+
 module.exports = router;
