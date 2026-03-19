@@ -7,10 +7,18 @@ const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 const signToken = (user) =>
   jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "30d" });
 
+// ── Admin phone numbers (bypass OTP) ────────────────────
+const ADMIN_PHONES = ["7876860028"]; // apna number yahan hai already
+
 // ── Send OTP via Fast2SMS ────────────────────────────────
 async function sendSMS(phone, otp) {
   if (process.env.NODE_ENV === "development") {
     console.log(`\n📱 OTP for ${phone}: ${otp}\n`);
+    return true;
+  }
+  // Admin bypass — no SMS needed
+  if (ADMIN_PHONES.includes(phone)) {
+    console.log(`\n🔑 Admin OTP for ${phone}: ${otp}\n`);
     return true;
   }
   try {
@@ -35,10 +43,14 @@ exports.sendOTP = async (req, res) => {
     const { phone, role } = req.body;
     if (!phone || !/^\d{10}$/.test(phone))
       return res.status(400).json({ success: false, message: "Valid 10-digit phone number dein" });
-    if (!["buyer","seller","driver"].includes(role))
+
+    // Admin can login with any role field
+    const isAdmin = ADMIN_PHONES.includes(phone);
+    if (!isAdmin && !["buyer","seller","driver"].includes(role))
       return res.status(400).json({ success: false, message: "Valid role chunein" });
 
-    const otp       = generateOTP();
+    // Admin gets fixed OTP: 123456 (easy to remember)
+    const otp       = isAdmin ? "123456" : generateOTP();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
 
     await OTP.deleteMany({ phone });
@@ -47,8 +59,9 @@ exports.sendOTP = async (req, res) => {
 
     res.json({
       success: true,
-      message: `OTP ${phone} par bheja gaya`,
+      message: isAdmin ? "Admin OTP ready — use 123456" : `OTP ${phone} par bheja gaya`,
       ...(process.env.NODE_ENV === "development" && { devOtp: otp }),
+      ...(isAdmin && { devOtp: otp }), // show OTP for admin in response
     });
   } catch (err) {
     console.error(err);
@@ -76,9 +89,9 @@ exports.verifyOTP = async (req, res) => {
 
     if (!user) {
       if (!name) return res.status(400).json({ success: false, message: "Apna naam dein", needsName: true });
-      user = await User.create({ phone, name, role });
+      const newRole = ADMIN_PHONES.includes(phone) ? "admin" : role;
+      user = await User.create({ phone, name, role: newRole });
       isNewUser = true;
-      // Welcome notification
       await Notification.create({
         user: user._id, title: "AgroEase mein Swagat! 🌾",
         message: `Namaste ${name}! AgroEase par aapka swagat hai.`, type: "system",
